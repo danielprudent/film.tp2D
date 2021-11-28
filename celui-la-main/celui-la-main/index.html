@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Movies</title>
+
+    <script>var container,options;</script>
+
+    <script src="client/utilitaire/bootstrap-5.1.1-dist/js/bootstrap.min.js"></script>
+    <script src="client/utilitaire/jquery-3.6.0.min.js"></script>
+    <script src="client/public/js/listeCategories.js"></script>
+    <script src="client/public/js/listeFilms.js"></script>
+    <script src="client/public/js/pagination.js"></script>
+    <script src="client/public/js/monJS.js"></script>
+
+    <link  href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="client/utilitaire/w3.css">
+    <link rel="stylesheet" href="client/utilitaire/bootstrap-5.1.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="client/public/css/pagination.css">
+    <link rel="stylesheet" href="client/public/css/style.css">
+
+
+
+    <script>
+
+      window.onload = function(){
+        let categorieSelectionnee;
+        chargerCategories();
+
+        document.getElementById("logo").onclick = function(){
+          createCardgroup(),
+          montrer('CardGroup'),
+          cacher('divEnreg'),
+          cacher('divConnexion');
+        }
+
+        document.getElementById("acceuil").onclick = function(){
+          createCardgroup(),
+          montrer('CardGroup'),
+          cacher('divEnreg'),
+          cacher('divConnexion');
+
+
+        }
+
+        document.getElementById("lister").onclick = function(){
+          chargerToutLesFilms(),
+          montrer('CardGroup'),
+          cacher('divEnreg'),
+          cacher('divConnexion');
+        }
+
+        document.getElementById("membre").onclick = function(){
+          cacher('CardGroup'),
+          cacher('divConnexion'),
+          montrer('divEnreg');
+        }
+
+        document.getElementById("connexion").onclick = function(){
+          cacher('CardGroup'),
+          cacher('divEnreg'),
+          montrer('divConnexion'); 
+        }
+
+        document.getElementById("categories").onclick = function(event) {
+          if (event.target.className.indexOf('categorie')!=-1) {
+           categorieSelectionnee = event.target.innerHTML;
+           chargerFilmsDeCategorie(categorieSelectionnee);
+           montrer('Cardgroup'),
+           cacher('divEnreg'),
+           cacher('divConnexion');
+        }
+
+      }
+      
+    }
+
+//var a = document.getElementById('pagination-demo1');
+  //var b = $('#pagination-demo1');
+  $(function() {
+    (function(name) {
+     container = $('#pagination'); // = document.getElementById('pagination-demo1');
+
+  
+      options = {
+        dataSource: listeFilms,
+        pageSize:15,
+        callback: function (response, pagination) {
+          window.console && console.log(response, pagination);
+  
+          var dataHtml = "";
+  
+          $.each(response, function (index, item) {
+            let visible = item.plot;
+            visible += " ... Plus";
+
+            var strDivCard="<div class='col-sm-3'>"
+                +" <div class='card'>"
+                +"   <div class='card-body'>"
+                +"       <img src = '"+item.posterUrl+"' alt= 'Not Found' onerror=\"this.src='client/public/images/image.jpeg';\">"
+                +"       <h1><p>"+item.title+" ("+item.year+")</h1></p>"
+                +"       <p>"+item.runtime+" min</p>"
+                +"       <p>";
+
+                for (g of item.genres)
+                strDivCard += g +' ';
+
+                let txtVisible = item.plot.substring(0,120);
+  
+  
+                if (item.plot.length>120)
+                txtVisible += '...';
+    
+     strDivCard +="       </p>"
+                +"       <p>"+item.director+"</p>"
+                +"       <p>"+item.actors+"</p>"
+                +"       <p>"+txtVisible+"</p>"
+                +"       <button type='button' class='btn btn-primary btn-lg'> Bande-annonce </button>"
+                +"       <button type='button' class='btn btn-primary btn-lg'> Ajouter au Panier </button>"
+                +"       <button type='button' class='btn btn-primary btn-lg' data-bs-toggle='modal' data-bs-target='#staticBackdrop2' onclick='supprimerFilm(${i});'>Supprimer film</button>"
+                +"       <button type='button' class='btn btn-primary btn-lg' data-bs-toggle='modal' data-bs-target='#staticBackdrop1' onclick='modifierFilm(${i});'>Modifier film</button>"
+                +"   </div>"
+                +"  </div>"
+                +"</div>";
+
+              dataHtml +=strDivCard;
+          });
+  
+          $('#CardGroup').html(dataHtml);
+        }
+      };
+  
+      //$.pagination(container, options);
+  
+      container.addHook('beforeInit', function () {
+        window.console && console.log('beforeInit...');
+      });
+      container.pagination(options);
+  
+      container.addHook('beforePageOnClick', function () {
+        window.console && console.log('beforePageOnClick...');
+        //return false
+      });
+    })();
+  })
+
+    </script>
+    <script src="fetch.js"></script>
+</head>
+
+<body>
+
+    <!-- Début du Menu de navigation -->
+     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">FILM IF1142
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" id="acceuil" aria-current="page" href="#" onclick="" >Acceuil</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" id="lister" aria-current="page" href="#" >Lister</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" 
+                id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" >Cat&eacute;gories</a>
+                <ul id="categories" class="dropdown-menu" 
+                aria-labelledby="navbarDropdown">
+                </ul>
+              </li>
+             
+              <li class="nav-item">
+                <div class="form-outline" onchange="rechercher();">
+                  <input type="search" id="search" class="form-control" />
+                </div>
+              </li>
+              <li class="nav-item">
+                <nav id="pagination" aria-label="..."> </nav>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+      </nav>
+    <!--MODAL-->
+
+      <!--MODIFIER FILM-->
+      <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel1">Modifier film</h5>
+              <button type="button"  class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+      
+            <form class="row g-3 needs-validation"action="submit" novalidate method="POST" id="form">
+            <div class="modal-body">
+                            <p><h6>Titre:</h6>
+                            <textarea class="form-control" id="titre1"></textarea> 
+                            <p><h6>Numero:</h6>
+                            <textarea class="form-control" id="numero1"></textarea> 
+                            <p><h6>Annee:</h6> 
+                            <textarea class="form-control" id="annee1"></textarea>  
+                            <p><h6>Duree:</h6>
+                            <textarea class="form-control" id="duree1"></textarea> 
+                            <p><h6>Categorie:</h6>
+                            <textarea class="form-control" id="categorie1"></textarea> 
+                            <p><h6>Directeur:</h6>
+                            <textarea class="form-control" id="directeur1"></textarea> 
+                            <p><h6>Acteur:</h6>
+                            <textarea class="form-control" id="acteur1"></textarea> 
+                            <p><h6>Description:</h6>
+                            <textarea class="form-control" id="description1"></textarea> 
+                          </form>
+          </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+              <button type="submit" onclick="modifierFilm1()" class="btn btn-primary">Modifier</button>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <!--SUPPRESSION DE FILM-->
+      <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel1">Suppression du film</h5>
+              <button type="button"  class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+      
+            <form class="row g-3 needs-validation"action="submit" novalidate method="POST" id="form">
+            <div class="modal-body">
+                            <p><h6>Etes-vous sur de vouloir supprimer ce film?</h6>
+                              <textarea class="form-control" id="numero2"visibility: hidden></textarea>
+                              
+                            
+          </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="button" onclick="supprimerFilm1()" class="btn btn-primary">Supprimer</button>
+            </div>
+          </div>
+        </div>
+      
+    </div> 
+
+  <main>
+    <!-- Début des cards -->  
+    <div class="container-fluid">
+
+      <div  id="CardGroup" class="row card-deck"> </div>
+
+    </div>
+    <!-- Fin des cards -->
+  </main>
+
+</body>
+
+  <!-- Debut du Pied de page --> 
+  <footer>
+
+  </footer>
+  <!-- Fin du Pied de page -->
+</html>
